@@ -16,9 +16,20 @@ resource "aws_default_security_group" "AUY1105-duocapp-default-sg" {
   }
 }
 
+resource "aws_kms_key" "AUY1105-duocapp-kms" {
+  description             = "KMS key para encriptar logs de VPC Flow Logs"
+  deletion_window_in_days = 7
+  enable_key_rotation     = true
+
+  tags = {
+    Name = "AUY1105-duocapp-kms"
+  }
+}
+
 resource "aws_cloudwatch_log_group" "AUY1105-duocapp-lg" {
   name              = "/aws/vpc/AUY1105-duocapp-flowlogs"
-  retention_in_days = 7
+  retention_in_days = 365
+  kms_key_id        = aws_kms_key.AUY1105-duocapp-kms.arn
 
   tags = {
     Name = "AUY1105-duocapp-lg"
@@ -50,17 +61,24 @@ resource "aws_iam_role_policy" "AUY1105-duocapp-flowlogs-policy" {
 
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Action = [
-        "logs:CreateLogGroup",
-        "logs:CreateLogStream",
-        "logs:PutLogEvents",
-        "logs:DescribeLogGroups",
-        "logs:DescribeLogStreams"
-      ]
-      Resource = "*"
-    }]
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:DescribeLogStreams"
+        ]
+        Resource = "${aws_cloudwatch_log_group.AUY1105-duocapp-lg.arn}:*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:DescribeLogGroups"
+        ]
+        Resource = aws_cloudwatch_log_group.AUY1105-duocapp-lg.arn
+      }
+    ]
   })
 }
 
