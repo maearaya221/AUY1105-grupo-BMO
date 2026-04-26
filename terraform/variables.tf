@@ -29,7 +29,7 @@ variable "instance_type" {
 }
 
 variable "ssh_allowed_cidr" {
-  description = "CIDR permitido para acceso SSH"
+  description = "CIDR permitido para acceso SSH (no usar 0.0.0.0/0)"
   type        = string
-  default     = "0.0.0.0/0"
+  default     = "10.0.0.0/8"
 }
