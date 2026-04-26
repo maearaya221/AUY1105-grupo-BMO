@@ -1,0 +1,75 @@
+name: Validacion Politicas OPA
+
+on:
+  workflow_call:
+    inputs:
+      path:
+        description: "Path to the Terraform code"
+        required: true
+        type: string
+      policies_path:
+        description: "Path to the OPA policies"
+        required: true
+        type: string
+
+jobs:
+
+  opa:
+    name: Validacion OPA
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Instalar OPA
+        run: |
+          curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
+          chmod +x opa
+          sudo mv opa /usr/local/bin/opa
+          opa version
+
+      - name: Terraform Init
+        working-directory: ${{ inputs.path }}
+        run: terraform init -backend=false
+
+      - name: Generar Terraform Plan en JSON
+        working-directory: ${{ inputs.path }}
+        run: |
+          terraform plan -out=tfplan.binary
+          terraform show -json tfplan.binary > tfplan.json
+
+      - name: Validar politica - No SSH publico
+        run: |
+          opa eval \
+            --input ${{ inputs.path }}/tfplan.json \
+            --data ${{ inputs.policies_path }}/no_public_ssh.rego \
+            --format pretty \
+            "data.terraform.policies.no_public_ssh.deny" | tee result_ssh.txt
+          
+          if grep -q "ERROR" result_ssh.txt; then
+            echo "Politica no_public_ssh FALLIDA"
+            cat result_ssh.txt
+            exit 1
+          else
+            echo "Politica no_public_ssh APROBADA"
+          fi
+
+      - name: Validar politica - Solo t2.micro
+        run: |
+          opa eval \
+            --input ${{ inputs.path }}/tfplan.json \
+            --data ${{ inputs.policies_path }}/only_t2_micro.rego \
+            --format pretty \
+            "data.terraform.policies.only_t2_micro.deny" | tee result_t2.txt
+          
+          if grep -q "ERROR" result_t2.txt; then
+            echo "Politica only_t2_micro FALLIDA"
+            cat result_t2.txt
+            exit 1
+          else
+            echo "Politica only_t2_micro APROBADA"
+          fi

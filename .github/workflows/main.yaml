@@ -16,6 +16,14 @@ jobs:
   validacion:
     name: Llamar validacion Terraform
     needs: analisis
-    uses: ./.github/workflows/validate.yaml
+    uses: ./.github/workflows/terraform-validate.yaml
     with:
       path: terraform/
+
+  politicas:
+    name: Llamar validacion politicas OPA
+    needs: validacion
+    uses: ./.github/workflows/opa-validation.yaml
+    with:
+      path: terraform/
+      policies_path: policies/
