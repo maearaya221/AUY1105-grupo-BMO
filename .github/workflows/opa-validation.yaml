@@ -18,6 +18,12 @@ jobs:
     name: Validacion OPA
     runs-on: ubuntu-latest
 
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+      AWS_DEFAULT_REGION: "us-east-1"
+
     steps:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
@@ -49,7 +55,7 @@ jobs:
             --data ${{ inputs.policies_path }}/no_public_ssh.rego \
             --format pretty \
             "data.terraform.policies.no_public_ssh.deny" | tee result_ssh.txt
-          
+
           if grep -q "ERROR" result_ssh.txt; then
             echo "Politica no_public_ssh FALLIDA"
             cat result_ssh.txt
@@ -65,7 +71,7 @@ jobs:
             --data ${{ inputs.policies_path }}/only_t2_micro.rego \
             --format pretty \
             "data.terraform.policies.only_t2_micro.deny" | tee result_t2.txt
-          
+
           if grep -q "ERROR" result_t2.txt; then
             echo "Politica only_t2_micro FALLIDA"
             cat result_t2.txt
