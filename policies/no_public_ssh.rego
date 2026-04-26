@@ -2,7 +2,7 @@ package terraform.policies.no_public_ssh
 
 import rego.v1
 
-# Mensaje de error
+# Mensaje de error :()
 deny contains msg if {
     some resource in input.resource_changes
     resource.type == "aws_security_group"
