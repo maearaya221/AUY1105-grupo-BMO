@@ -13,11 +13,11 @@ Todos los cambios notables de este proyecto serán documentados en este archivo.
   - Internet Gateway y Tablas de Enrutamiento asociadas.
   - Grupo de Seguridad (Security Group) para permitir tráfico SSH.
   - Instancia EC2 tipo `t2.micro` con imagen AMI dinámica de Ubuntu 24.04 LTS.
-- **Automatización (PR #3)**: Implementación de flujo CI/CD con GitHub Actions (`.github/workflows/terraform-ci.yml`). El pipeline consta de tres etapas secuenciales:
+- **Automatización (PR #3)**: Implementación de flujo CI/CD con GitHub Actions (`.github/workflows/`). El pipeline consta de tres etapas secuenciales:
   - Análisis estático con TFLint.
   - Análisis de seguridad con Checkov.
   - Validación de sintaxis con Terraform Validate.
-- **Políticas OPA (PR #4)**: Creación del directorio `policies/` con el archivo `terraform.rego`. Se definieron dos reglas estrictas de cumplimiento:
+- **Políticas OPA (PR #4)**: Creación del directorio `policies/`. Se definieron dos reglas estrictas de cumplimiento:
   - Denegar la creación de instancias que no sean del tipo `t2.micro`.
   - Denegar la apertura del puerto 22 (SSH) hacia todo internet (`0.0.0.0/0`).
 
