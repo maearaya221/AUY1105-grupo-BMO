@@ -1,24 +1,24 @@
 output "vpc_id" {
-  description = "ID de la VPC creada"
-  value       = aws_vpc.AUY1105-duocapp-vpc.id
+  description = "ID de la VPC"
+  value       = module.network.vpc_id
 }
 
 output "subnet_id" {
-  description = "ID de la subred publica creada"
-  value       = aws_subnet.AUY1105-duocapp-subnet.id
+  description = "ID de la subnet"
+  value       = module.network.subnet_id
 }
 
 output "security_group_id" {
-  description = "ID del Security Group creado"
-  value       = aws_security_group.AUY1105-duocapp-sg.id
+  description = "ID del Security Group"
+  value       = module.network.security_group_id
 }
 
 output "ec2_instance_id" {
-  description = "ID de la instancia EC2 creada"
-  value       = aws_instance.AUY1105-duocapp-ec2.id
+  description = "ID de la instancia EC2"
+  value       = module.compute.instance_id
 }
 
 output "ec2_public_ip" {
-  description = "IP publica de la instancia EC2"
-  value       = aws_instance.AUY1105-duocapp-ec2.public_ip
+  description = "IP publica EC2"
+  value       = module.compute.instance_ip
 }

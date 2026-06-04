@@ -11,25 +11,25 @@ variable "vpc_cidr" {
 }
 
 variable "subnet_cidr" {
-  description = "Bloque CIDR para la subred publica"
+  description = "Bloque CIDR para la subred"
   type        = string
   default     = "10.1.1.0/24"
 }
 
 variable "ami_id" {
-  description = "AMI de Ubuntu 24.04 LTS para la instancia EC2"
+  description = "AMI Ubuntu"
   type        = string
   default     = "ami-0e86e20dae9224db8"
 }
 
 variable "instance_type" {
-  description = "Tipo de instancia EC2"
+  description = "Tipo de instancia"
   type        = string
   default     = "t2.micro"
 }
 
 variable "ssh_allowed_cidr" {
-  description = "CIDR permitido para acceso SSH (no usar 0.0.0.0/0)"
+  description = "CIDR permitido para SSH"
   type        = string
   default     = "10.0.0.0/8"
 }
